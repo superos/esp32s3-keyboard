@@ -83,17 +83,17 @@ static const uint8_t KEY_RELEASE[8] = {0};
  * AO3401: S = 5v-Vin, D = 5v-Vout, G + 10kΩ = S
  * S8050: B + 5kΩ = GPIO, E = GND, C = AO3401 G
  * GPIO output mode + pulldown, GPIO write 0 (default) -=> D = 0v, write 1 => D = 5v
- * 
- * ┌───┐ESP32.USB ┌───┐KEYBOARD
- * │GND├──────────┤GND├────────────┐
- * │D- ├──────────┤D- │            │
- * │D+ ├──────────┤D+ │            │
- * │5v ┼┐        ┌┼5v │            │
- * └───┘│        │└───┘            │
- *      │    ┌───┼───┐AO3401   ┌───┼───┐S8050
- *      ├────┼S  D  G┼────┬────┼C  E  B┼────5kΩ──── GPIO(USB_POWER_CTRL)
- *      │    └───────┘    │    └───────┘
- *      └───────10kΩ──────┘
+ * UPDATE: add 100uf capacitor to stabilize voltage and prevent brownout during keyboard connection
+ *         ┌───┐ESP32.USB ┌───┐KEYBOARD
+ * ─┬─ ~~ ─┤GND├──────────┤GND├────────────┐
+ *  │      │D- ├──────────┤D- │            │
+ * 100uf   │D+ ├──────────┤D+ │            │
+ * ─┴─ ~~ ─┤5v ┼┐        ┌┼5v │            │
+ *         └───┘│        │└───┘            │
+ *              │    ┌───┼───┐AO3401   ┌───┼───┐S8050
+ *              ├────┼S  D  G┼────┬────┼C  E  B┼────5kΩ──── GPIO(USB_POWER_CTRL)
+ *              │    └───────┘    │    └───────┘
+ *              └───────10kΩ──────┘
  */
 static const gpio_num_t KEYBOARD_POWER_CTRL = GPIO_NUM_3;
 static const uint8_t    KEYBOARD_POWER_ON   = HIGH;
@@ -159,12 +159,13 @@ static const uint32_t MAX_IDLE_MS = MAX_IDLE_MINUTES * ONE_MINUTE;
  * CE: Chip Enable pin to activate the NRF24L01+ for transmission or reception
  * CSN: Chip Select Not pin to select the NRF24L01+ device on the SPI bus
  * ESP32S3 3v3 and 5v cannot drive enough current, extra power required for NRF24L01+: 115mA@0dBm, 90mA@-6dBm
- * 
+ * UPDATE: add 47uf capacitor to stabilize voltage and prevent brownout during wireless transmission
  * ┌───────────────────────────────────────┐J1 
  * │3v3   ...      9  10 11 12 13  ...  GND│
  * └───────────────┼──┼──┼──┼──┼───────────┘
- *     GND ─────┐  │  │  │  │  │
- *     3v3 ──┐  │  │  │  │  │  │
+ * GND ─┬───────┐  │  │  │  │  │
+ *     47uf     │  │  │  │  │  │
+ * 3v3 ─┴────┐  │  │  │  │  │  │
  *         ┌─┼──┼──┼──┼──┼──┼──┼─┐
  *         │  nRF24L01+ module   │
  *         └─────────────────────┘
