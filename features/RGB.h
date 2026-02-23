@@ -50,7 +50,7 @@ class RGBCKSwitch {
         while (1) {
           if (ts == 0 || millis() - ts > BATTERY_READ_INTERVAL) {
             ts = millis();
-            v2 = medianAverage() * 2.0;
+            v2 = medianAverage() * 2.13; // compensate ADC voltage drop due to 100k divider
             v1 = v1 == 0 ? v2 : (v1 * 0.7) + (v2 * 0.3);
             mv = uint32_t(v1);
             lv = mapMilliVolt(mv);
