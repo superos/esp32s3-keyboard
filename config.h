@@ -106,12 +106,11 @@ static const uint8_t    KEYBOARD_POWER_OFF  = LOW;
  * R: output, 0 = on, 1 = off, status of batteryLevel, BLINK when low, otherwise OFF
  * G: output, 0 = on, 1 = off, status of usb keyboard, BLINK when connecting, OFF when usb connected but ble connecting, ON when usb & ble both connected
  * B: output, 0 = on, 1 = off, status of ble keyboard, BLINK when connecting, OFF when connected
- * current limiting resistor for led: R = 150Ω, G = 50Ω, B = 50Ω
- * 
+ * UPDATE: i've removed external resistors which caused brightness issues, measurement shows my switch has built-in resistors
  * ┌───────────────────────────┐J1
  * │3v3 ... 4  5  6  7  ... GND│
  * └─┼──────┼──┼──┼──┼─────────┘
- *   │     150 50 50 │
+ *   │      │  │  │  │
  *   └───┐  │  │  │  │
  *      ┌┼──┼──┼──┼──┼┐ Co-Anode RGB Switch
  *      │C  R  G  B  K│
